@@ -1,24 +1,46 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap');
+/*   ----- Variables  -----  */
+:root {
+  --color-sky: rgb(180, 200, 220);
+  --color-cloud: rgb(83, 103, 135);
+  --color-sky-trans: rgba(155, 172, 209, 0.5);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+  font-family: "Bitter", serif;
+  font-size: 16px;
+  font-weight: 400;
+  background-image: linear-gradient(to bottom right, rgb(217, 228, 237), white);
 }
 
-@keyframes logo-spin {
+main {
+  max-width: 1140px;
+  margin: auto;
+}
+
+.custom-navbar {
+  background-color: var(--color-cloud);
+  margin: 0;
+  padding: 0;
+  font-size: 13pt;
+}
+
+.nav-underline .nav-link:hover, .nav-underline .nav-link:focus {
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
@@ -27,16 +49,3 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
