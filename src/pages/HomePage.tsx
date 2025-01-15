@@ -4,7 +4,7 @@ const HomePage = () => {
         <>
             <div className="flex flex-col items-center justify-center h-screen">
                 <img
-                    src="../../public/images/actuliLogo.png"
+                    src="/images/actuliLogo.png"
                     alt="logo"
                     className="mx-auto rounded-3xl w-[25vw] max-w-[400px] h-auto"
                 />

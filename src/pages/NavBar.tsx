@@ -1,27 +1,28 @@
 const Navbar = () => {
     return (
-        <nav className="bg-blue-600 rounded text-white">
+        <nav className="bg-primary rounded text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <a href="/android-chrome-192x192.png" className="text-xl font-bold">
-                            Actuli
+                        <a href="/" className="flex items-center space-x-2 text-xl font-bold">
+                            <img src="/android-chrome-192x192.png" alt="Logo" className="h-8 w-8" />
+                            <span>Actuli</span>
                         </a>
                     </div>
 
                     {/* Links (Desktop) */}
                     <div className="hidden md:flex space-x-4">
-                        <a href="/" className="hover:bg-blue-700 px-3 py-2 rounded-md">
+                        <a href="/" className="hover:bg-secondary px-3 py-2 rounded-md">
                             Home
                         </a>
-                        <a href="/profile" className="hover:bg-blue-700 px-3 py-2 rounded-md">
+                        <a href="/profile" className="hover:bg-secondary px-3 py-2 rounded-md">
                             Profile
                         </a>
-                        <a href="/goals" className="hover:bg-blue-700 px-3 py-2 rounded-md">
+                        <a href="/goals" className="hover:bg-secondary px-3 py-2 rounded-md">
                             Goals
                         </a>
-                        <a href="/achievements" className="hover:bg-blue-700 px-3 py-2 rounded-md">
+                        <a href="/achievements" className="hover:bg-secondary px-3 py-2 rounded-md">
                             Achievements
                         </a>
                     </div>

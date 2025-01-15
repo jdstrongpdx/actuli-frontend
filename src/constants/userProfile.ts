@@ -1,0 +1,46 @@
+export let userProfile = {
+    id: null,
+    name: {
+        firstName: 'Test First',
+        lastName: 'Test Last',
+    },
+    email: '',
+    username: '',
+    role: ['user'],
+    isActive: true,
+    profile: {
+        avatar: '',
+        bio: '',
+        mobileNumber: '',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        address: {
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: '',
+        },
+    },
+    data: {
+        education: {},
+        work: {},
+        relationships: {},
+        religion: {},
+        housing: {},
+        hobby: {},
+        health: {},
+        giving: {},
+        fiances: {},
+        identity: {},
+    },
+    preferences: {
+        language: 'en',
+        theme: 'light',
+        notifications: {
+            email: true,
+            sms: false,
+            push: true,
+        },
+    },
+};
