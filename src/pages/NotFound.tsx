@@ -1,6 +1,17 @@
+const NotFoundPage = () => {
+  return (
+      <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "80vh",
+            textAlign: "center",
+          }}
+      >
+        <h1>404: Page Not Found</h1>
+      </div>
+  );
+};
 
-const NotFound = () => {
-  return <h1>404: Page Not Found</h1>
-}
-
-export default NotFound;
+export default NotFoundPage;

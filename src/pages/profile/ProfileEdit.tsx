@@ -1,122 +1,275 @@
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
+import { Form, Button } from "react-bootstrap";
+import {statesList} from "../../data/statesList.ts";
+import {IUserProfile} from "../../interfaces/IUser.ts";
+import {userData} from "../../data/userData.ts";
 
-const PasswordErrorMessage = () => {
-    return (
-        <p className="FieldError">Password should have at least 8 characters</p>
-    );
-};
+interface IUserForm {
+    firstName: string;
+    lastName: string;
+    avatar: string;
+    bio: string;
+    mobileNumber: string;
+    website: string;
+    dateOfBirth: string;
+    address1: string;
+    address2: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}
+
+const initialValues: IUserForm = {
+    firstName: '',
+    lastName: '',
+    avatar: '',
+    bio: '',
+    mobileNumber: '',
+    website: '',
+    dateOfBirth: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    postalCode: '',
+    country: '',
+}
 
 const ProfileEdit = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState({
-        value: "",
-        isTouched: false,
-    });
-    const [role, setRole] = useState("role");
+    const [userProfile, setUserProfile] = useState(initialValues);
 
+    // TODO form validation
     const getIsFormValid = () => {
-        return (
-            firstName &&
-            email &&
-            password.value.length >= 8 &&
-            role !== "role"
-        );
-    };
+        return true;
+    }
 
     const clearForm = () => {
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setPassword({
-            value: "",
-            isTouched: false,
-        });
-        setRole("role");
+        setUserProfile(initialValues);
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+
+        setUserProfile((prevProfile) => ({
+            ...prevProfile,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        const updatedProfile = convertProfileOnSubmit(userProfile);
+        // TODO update user data
         alert("Account created!");
         clearForm();
     };
 
+    function convertProfileOnSubmit(formValues: IUserForm): IUserProfile {
+        const { address1, address2, city, state, postalCode, country, dateOfBirth, ...rest } = formValues;
+
+        return {
+            ...rest, // Spread all other properties directly
+            dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : new Date(), // Convert dateOfBirth
+            address: {
+                address1,
+                address2,
+                city,
+                state,
+                postalCode,
+                country,
+            },
+        };
+    }
+
     return (
         <div className="App">
-            <form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
                 <fieldset>
-                    <h2>Sign Up</h2>
-                    <div className="Field">
-                        <label>
+                    <h2>Profile Edit</h2>
+
+                    {/* First Name */}
+                    <Form.Group className="mb-3" controlId="formFirstName">
+                        <Form.Label>
                             First name <sup>*</sup>
-                        </label>
-                        <input
-                            value={firstName}
-                            onChange={(e) => {
-                                setFirstName(e.target.value);
-                            }}
+                        </Form.Label>
+                        <Form.Control
+                            type="text"
                             placeholder="First name"
+                            name="firstName"
+                            value={userProfile.firstName}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <div className="Field">
-                        <label>Last name</label>
-                        <input
-                            value={lastName}
-                            onChange={(e) => {
-                                setLastName(e.target.value);
-                            }}
+                    </Form.Group>
+
+                    {/* Last Name */}
+                    <Form.Group className="mb-3" controlId="formLastName">
+                        <Form.Label>
+                            Last name <sup>*</sup>
+                        </Form.Label>
+                        <Form.Control
+                            type="text"
                             placeholder="Last name"
+                            name="lastName"
+                            value={userProfile.lastName}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <div className="Field">
-                        <label>
-                            Email address <sup>*</sup>
-                        </label>
-                        <input
-                            value={email}
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                            }}
-                            placeholder="Email address"
+                    </Form.Group>
+
+                    {/* Avatar */}
+                    <Form.Group className="mb-3" controlId="formAvatar">
+                        <Form.Label>Avatar URL</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Avatar URL"
+                            name="avatar"
+                            value={userProfile.avatar}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <div className="Field">
-                        <label>
-                            Password <sup>*</sup>
-                        </label>
-                        <input
-                            value={password.value}
-                            type="password"
-                            onChange={(e) => {
-                                setPassword({ ...password, value: e.target.value });
-                            }}
-                            onBlur={() => {
-                                setPassword({ ...password, isTouched: true });
-                            }}
-                            placeholder="Password"
+                    </Form.Group>
+
+                    {/* Bio */}
+                    <Form.Group className="mb-3" controlId="formBio">
+                        <Form.Label>Bio</Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Tell us about yourself..."
+                            name="bio"
+                            value={userProfile.bio}
+                            onChange={handleChange}
                         />
-                        {password.isTouched && password.value.length < 8 ? (
-                            <PasswordErrorMessage />
-                        ) : null}
-                    </div>
-                    <div className="Field">
-                        <label>
-                            Role <sup>*</sup>
-                        </label>
-                        <select value={role} onChange={(e) => setRole(e.target.value)}>
-                            <option value="role">Role</option>
-                            <option value="individual">Individual</option>
-                            <option value="business">Business</option>
-                        </select>
-                    </div>
-                    <button type="submit" disabled={!getIsFormValid()}>
-                        Create account
-                    </button>
+                    </Form.Group>
+
+                    {/* Mobile Number */}
+                    <Form.Group className="mb-3" controlId="formMobileNumber">
+                        <Form.Label>Mobile Number</Form.Label>
+                        <Form.Control
+                            type="tel"
+                            placeholder="Mobile Number"
+                            name="mobileNumber"
+                            value={userProfile.mobileNumber}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* Website */}
+                    <Form.Group className="mb-3" controlId="formWebsite">
+                        <Form.Label>Website</Form.Label>
+                        <Form.Control
+                            type="url"
+                            placeholder="Website URL"
+                            name="website"
+                            value={userProfile.website}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* Date of Birth */}
+                    <Form.Group className="mb-3" controlId="formDateOfBirth">
+                        <Form.Label>Date of Birth</Form.Label>
+                        <Form.Control
+                            type="date"
+                            placeholder="Enter your date of birth"
+                            name="dateOfBirth"
+                            value={userProfile.dateOfBirth}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* Address 1 */}
+                    <Form.Group className="mb-3" controlId="formAddress1">
+                        <Form.Label>Address Line 1</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Address Line 1"
+                            name="address1"
+                            value={userProfile.address1}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* Address 2 */}
+                    <Form.Group className="mb-3" controlId="formAddress2">
+                        <Form.Label>Address Line 2</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Address Line 2"
+                            name="address2"
+                            value={userProfile.address2}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* City */}
+                    <Form.Group className="mb-3" controlId="formCity">
+                        <Form.Label>City</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="City"
+                            name="city"
+                            value={userProfile.city}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* State */}
+                    <Form.Group className="mb-3">
+                        <Form.Label htmlFor="formState">Select a State:</Form.Label>
+                        <Form.Select
+                            id="formState"
+                            name="state"
+                            value={userProfile.state}
+                            onChange={handleChange}
+                        >
+                            <option value="" disabled>
+                                -- Select a State --
+                            </option>
+                            {Object.entries(statesList).map(([key, state]) => (
+                                <option key={key} value={state.stateAbbreviation}>
+                                    {state.stateName}
+                                </option>
+                            ))}
+                        </Form.Select>
+                    </Form.Group>
+
+                    {/* Postal Code */}
+                    <Form.Group className="mb-3" controlId="formPostalCode">
+                        <Form.Label>Postal Code</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Postal Code"
+                            name="postalCode"
+                            value={userProfile.postalCode}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+                    {/* Country */}
+                    <Form.Group className="mb-3" controlId="formCountry">
+                        <Form.Label>Country</Form.Label>
+                        <Form.Control
+                            type="text"
+                            placeholder="Country"
+                            name="country"
+                            value={userProfile.country}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+
+
+
+                    <Button
+                        type="submit"
+                        variant="primary"
+                        disabled={!getIsFormValid()}
+                    >
+                        Update Profile
+                    </Button>
                 </fieldset>
-            </form>
+            </Form>
         </div>
     );
-}
+};
 
 export default ProfileEdit;
