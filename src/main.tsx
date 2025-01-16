@@ -2,6 +2,7 @@ import  {createRoot} from "react-dom/client";
 import { PublicClientApplication, EventType } from "@azure/msal-browser";
 import App from "./App";
 import { msalConfig } from "./config/authConfig.ts";
+import React from "react";
 
 
 /**
@@ -31,5 +32,7 @@ if (!container) {
 
 const root = createRoot(container);
 root.render(
-    <App instance={msalInstance} />
+    <React.StrictMode>
+        <App instance={msalInstance} />
+    </React.StrictMode>
 );
