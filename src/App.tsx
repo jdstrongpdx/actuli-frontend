@@ -1,130 +1,79 @@
 import React from "react";
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import {Col, Container, Row} from 'react-bootstrap';
-import { useMsal } from "@azure/msal-react";
-import { InteractionType, InteractionRequiredAuthError } from "@azure/msal-browser";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import {AuthenticatedTemplate, useMsal, UnauthenticatedTemplate, MsalProvider} from "@azure/msal-react";
+import { loginRequest } from "./config/authConfig.ts";
+// Navigation and Pages
+import NavBar from "./components/NavBar.tsx";
+import Footer from "./components/Footer.tsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
+import AuthTest from "./components/auth/AuthTest.tsx";
+import { IdTokenData } from "./components/auth/DataDisplay.tsx";
+import HomePage from "./components/HomePage.tsx";
+import NotFound from "./components/NotFound.tsx";
+import ProfileView from "./components/profile/ProfileView.tsx";
+import ProfileEdit from "./components/profile/ProfileEdit.tsx";
+import { PageLayout } from "./components/PageLayout.tsx";
 
-// Navigation
-import NavBar from "./pages/NavBar.tsx";
-import Footer from "./pages/Footer.tsx";
+/**
+ * Most applications will need to conditionally render certain components based on whether a user is signed in or not.
+ * msal-react provides 2 easy ways to do this. AuthenticatedTemplate and UnauthenticatedTemplate components will
+ * only render their children if a user is authenticated or unauthenticated, respectively. For more, visit:
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
+ */
+const MainContent = () => {
+    /**
+     * useMsal is hook that returns the PublicClientApplication instance,
+     * that tells you what msal is currently doing. For more, visit:
+     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/hooks.md
+     */
+    const { instance } = useMsal();
+    const activeAccount = instance.getActiveAccount();
 
-// Auth
-import ProtectedRoute from "./pages/auth/ProtectedRoute.tsx";
-
-
-import HomePage from "./pages/HomePage.tsx";
-import NotFound from "./pages/NotFound.tsx";
-
-import ProfileView from "./pages/profile/ProfileView.tsx";
-import ProfileEdit from "./pages/profile/ProfileEdit.tsx";
-
-const App: React.FC = () => {
-    const { instance, accounts } = useMsal();
-
-
-    const handleLogin = () => {
+    const handleRedirect = () => {
         instance
-            .loginPopup({
-                scopes: ["User.Read"], // Example scope, adjust based on your API permissions
+            .loginRedirect({
+                ...loginRequest,
+                prompt: 'create',
             })
-            .then((response) => {
-                console.log("Login Response:", response);
-            })
-            .catch((error) => {
-                console.error("Login Error:", error);
-            });
+            .catch((error) => console.log(error));
     };
-
-    const getAccessToken = async () => {
-        try {
-            const tokenResponse = await instance.acquireTokenSilent({
-                scopes: ["User.Read"], // Match the scope configured in Azure
-                account: accounts[0],
-            });
-            console.log("Access Token:", tokenResponse.accessToken);
-        } catch (error) {
-            if (error instanceof InteractionRequiredAuthError) {
-                instance
-                    .acquireTokenPopup({
-                        scopes: ["User.Read"],
-                    })
-                    .then((tokenResponse) => {
-                        console.log("Access Token:", tokenResponse.accessToken);
-                    })
-                    .catch((error) => {
-                        console.error("Token Acquisition Error:", error);
-                    });
-            } else {
-                console.error(error);
-            }
-        }
-    };
-
-    const fetchProtectedResource = async () => {
-        const tokenResponse = await instance.acquireTokenSilent({
-            scopes: ["api.read"],
-            account: accounts[0],
-        });
-
-        const response = await fetch("http://localhost:5297/weatherforecast", {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${tokenResponse.accessToken}`,
-            },
-        });
-
-        const data = await response.json();
-        console.log("Data:", data);
-    };
-
-
-    // wrap context providers
     return (
-        <>
-            <BrowserRouter>
-                <AppContent/>
-                <div>
-                    <h1>Welcome to React with MSAL Authentication</h1>
-                    <button onClick={handleLogin}>Login</button>
-                    <button onClick={getAccessToken}>Get Access Token</button>
-                    <button onClick={fetchProtectedResource}>Get Protected Resource</button>
-                </div>
-            </BrowserRouter>
-        </>
-    )
-}
-
-const AppContent: React.FC = () => {
-    return (
-        <div className="d-flex flex-column min-vh-100">
-            <NavBar/>
-            <Container className="flex-grow-1 my-4">
-                <Row>
-                    <Col>
-                        <Routes>
-                                <Route path="/" element={<HomePage />} />
-                                    <Route path="/profile"
-                                           element={
-                                               <ProtectedRoute>
-                                                    <ProfileView />
-                                               </ProtectedRoute>
-                                    } />
-                                    <Route path="/profileEdit" element={<ProfileEdit />} />
-
-                            <Route path="*" element={<NotFound />} />
-
-                        </Routes>
-                    </Col>
-                </Row>
-                <div className="pb-5"></div>
-            </Container>
-            <Footer />
+        <div className="App">
+            <AuthenticatedTemplate>
+                {activeAccount ? (
+                    <Container>
+                        <IdTokenData idTokenClaims={activeAccount.idTokenClaims} />
+                    </Container>
+                ) : null}
+            </AuthenticatedTemplate>
+            <UnauthenticatedTemplate>
+                <Button className="signInButton" onClick={handleRedirect} variant="primary">
+                    Sign up
+                </Button>
+            </UnauthenticatedTemplate>
         </div>
+    );
+};
 
-    )
-        ;
+
+/**
+ * msal-react is built on the React context API and all parts of your app that require authentication must be
+ * wrapped in the MsalProvider component. You will first need to initialize an instance of PublicClientApplication
+ * then pass this to MsalProvider as a prop. All components underneath MsalProvider will have access to the
+ * PublicClientApplication instance via context as well as all hooks and components provided by msal-react. For more, visit:
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
+ */
+const App = ({ instance }) => {
+    return (
+        <MsalProvider instance={instance}>
+            <PageLayout>
+                <MainContent />
+            </PageLayout>
+        </MsalProvider>
+    );
 };
 
 export default App;
