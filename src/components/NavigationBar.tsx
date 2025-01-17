@@ -1,6 +1,6 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import { Navbar, Button } from 'react-bootstrap';
-import {loginRequest} from "../config/authConfig.ts";
+import {loginRequest} from "../authConfig.ts";
 
 
 export const NavigationBar = () => {

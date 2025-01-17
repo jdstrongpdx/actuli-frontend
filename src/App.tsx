@@ -2,16 +2,17 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
 
 // Navigation and Pages
-import HomePage from "./components/HomePage.tsx";
-import NotFound from "./components/NotFound.tsx";
+import HomePage from "./pages/HomePage.tsx";
+import NotFound from "./pages/NotFound.tsx";
 import ProfileView from "./components/profile/ProfileView.tsx";
 import ProfileEdit from "./components/profile/ProfileEdit.tsx";
 import { PageLayout } from "./components/PageLayout.tsx";
 import AuthContent from "./components/auth/AuthContent.tsx";
-import WeatherForecast from "./components/WeatherForecast.tsx";
-import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
+import WeatherForecast from "./pages/WeatherForecast.tsx";
+import {ToDoList} from "./pages/ToDoList.tsx";
 
 /**
  * msal-react is built on the React context API and all parts of your app that require authentication must be
@@ -20,56 +21,39 @@ import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
  * PublicClientApplication instance via context as well as all hooks and components provided by msal-react. For more, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
  */
-const App = ({instance}) => {
 
+const Pages = () => {
+    return (
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+
+            <Route path="/authContent" element={<AuthContent />}/>
+            <Route path="/profile" element={<ProfileView />}/>
+            <Route path="/profileEdit" element={<ProfileEdit />}/>
+            <Route path="/weather" element={<WeatherForecast />}/>
+            <Route path="/todo" element={<ToDoList />}/>
+
+            {/* Fallback Route */}
+            <Route path="*" element={<NotFound />} />
+            <Route path="/todolist" element={<ToDoList />} />
+
+        </Routes>
+    );
+};
+
+/**
+ * msal-react is built on the React context API and all parts of your app that require authentication must be
+ * wrapped in the MsalProvider component. You will first need to initialize an instance of PublicClientApplication
+ * then pass this to MsalProvider as a prop. All components underneath MsalProvider will have access to the
+ * PublicClientApplication instance via context as well as all hooks and components provided by msal-react. For more, visit:
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-react/docs/getting-started.md
+ */
+const App: React.FC<{ instance: PublicClientApplication; }> = ({ instance }) => {
     return (
         <MsalProvider instance={instance}>
-            <BrowserRouter>
-                    <PageLayout>
-                        <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<HomePage />} />
-
-                            {/* Protected Routes */}
-                            <Route
-                                path="/authContent"
-                                element={
-                                    <ProtectedRoute>
-                                        <AuthContent />
-                                    </ProtectedRoute>
-                                }
-                            />
-
-                            <Route
-                                path="/profile"
-                                element={
-                                    <ProtectedRoute>
-                                        <ProfileView />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/profileEdit"
-                                element={
-                                    <ProtectedRoute>
-                                        <ProfileEdit />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/weather"
-                                element={
-                                    <ProtectedRoute>
-                                        <WeatherForecast />
-                                    </ProtectedRoute>
-                                }
-                            />
-
-                            {/* Fallback Route */}
-                            <Route path="*" element={<NotFound />} />
-                        </Routes>
-                    </PageLayout>
-            </BrowserRouter>
+            <PageLayout>
+                <Pages />
+            </PageLayout>
         </MsalProvider>
     );
 };

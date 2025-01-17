@@ -3,28 +3,30 @@
  * Licensed under the MIT License.
  */
 
-import { LogLevel } from '@azure/msal-browser';
+import { LogLevel } from "@azure/msal-browser";
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
  * For a full list of MSAL.js configuration parameters, visit:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
  */
-
 export const msalConfig = {
     auth: {
         clientId: import.meta.env.VITE_CLIENT_ID, // This is the ONLY mandatory field that you need to supply.
-        authority: `https://login.microsoftonline.com/${import.meta.env.VITE_TENANT_ID}`, // Replace the placeholder with your tenant subdomain
-        redirectUri: import.meta.env.VITE_REDIRECT_URI, // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
+        authority: import.meta.env.VITE_API_AUTHORITY,
+        redirectUri: import.meta.env.VITE_REDIRECT_URI, // You must register this URI on Microsoft Entra admin center/App Registration. Defaults to window.location.origin
         postLogoutRedirectUri: '/', // Indicates the page to navigate after logout.
-        navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
     },
     cache: {
-        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
+        cacheLocation: 'localStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
         storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
     },
     system: {
         loggerOptions: {
+            /**
+             * Below you can configure MSAL.js logs. For more information, visit:
+             * https://docs.microsoft.com/azure/active-directory/develop/msal-logging-js
+             */
             loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
                 if (containsPii) {
                     return;
@@ -51,20 +53,25 @@ export const msalConfig = {
 };
 
 /**
+ * Add here the endpoints and scopes when obtaining an access token for protected web APIs. For more information, see:
+ * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
+ */
+export const protectedResources = {
+    Backend: {
+        endpoint: import.meta.env.VITE_API_ENDPOINT,
+        scopes: {
+            read: [import.meta.env.VITE_API_READ_SCOPE],
+            write: [import.meta.env.VITE_API_WRITE_SCOPE],
+        },
+    },
+};
+
+/**
  * Scopes you add here will be prompted for user consent during sign-in.
  * By default, MSAL.js will add OIDC scopes (openid, profile, email) to any login request.
  * For more information about OIDC scopes, visit:
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: [],
+    scopes: [...protectedResources.Backend.scopes.read, ...protectedResources.Backend.scopes.write],
 };
-
-/**
- * An optional silentRequest object can be used to achieve silent SSO
- * between applications by providing a "login_hint" property.
- */
-// export const silentRequest = {
-//     scopes: ["openid", "profile"],
-//     loginHint: "example@domain.net"
-// };

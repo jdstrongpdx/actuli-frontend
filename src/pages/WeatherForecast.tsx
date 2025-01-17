@@ -1,8 +1,14 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
+import {useMsal} from "@azure/msal-react";
+import {loginRequest} from "../authConfig.ts";
 
 const Weather = () => {
     const [weatherData, setWeatherData] = useState<any[]>([]);
+    const { instance } = useMsal();
+    const activeAccount = instance.getActiveAccount();
+
+
 
     useEffect(() => {
         const fetchWeather = async () => {

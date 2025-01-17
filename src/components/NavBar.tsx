@@ -2,7 +2,7 @@ import {Button, Container, Nav, Navbar} from 'react-bootstrap';
 import {useEffect, useState} from "react";
 import {useLocation} from "react-router-dom";
 import {AuthenticatedTemplate, UnauthenticatedTemplate, useMsal} from "@azure/msal-react";
-import {loginRequest} from "../config/authConfig.ts";
+import {loginRequest} from "../authConfig.ts";
 
 
 const NavBar = () => {
