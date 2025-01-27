@@ -77,7 +77,9 @@ const NavBar = () => {
                                     </Button>
                                 </AuthenticatedTemplate>
                                 <UnauthenticatedTemplate>
-                                        <Button onClick={handleLoginRedirect}>Sign in</Button>
+                                    <Button onClick={handleLoginRedirect}>
+                                        {import.meta.env.MODE === 'development' ? 'Sign in (Dev)' : ''}
+                                    </Button>
                                 </UnauthenticatedTemplate>
                             </Nav>
                         </Navbar.Collapse>

@@ -1,17 +1,13 @@
-import {
-    useState,
-    useCallback,
-} from 'react';
-
-import { InteractionType } from '@azure/msal-browser';
-import { useMsal, useMsalAuthentication } from "@azure/msal-react";
+import { useState, useCallback } from 'react';
+import { InteractionType, PopupRequest, RedirectRequest, SsoSilentRequest} from '@azure/msal-browser';
+import {useMsal, useMsalAuthentication} from "@azure/msal-react";
 
 /**
  * Custom hook to call a web API using bearer token obtained from MSAL
  * @param {PopupRequest} msalRequest
  * @returns
  */
-const useFetchWithMsal = (msalRequest) => {
+const useFetchWithMsal = (msalRequest: PopupRequest | RedirectRequest | SsoSilentRequest | undefined) => {
     const { instance } = useMsal();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);

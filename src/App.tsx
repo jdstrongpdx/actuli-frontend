@@ -1,4 +1,4 @@
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { Route, Routes} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import { MsalProvider } from "@azure/msal-react";
@@ -11,8 +11,6 @@ import ProfileView from "./components/profile/ProfileView.tsx";
 import ProfileEdit from "./components/profile/ProfileEdit.tsx";
 import { PageLayout } from "./components/PageLayout.tsx";
 import AuthContent from "./components/auth/AuthContent.tsx";
-import WeatherForecast from "./pages/WeatherForecast.tsx";
-import {ToDoList} from "./pages/ToDoList.tsx";
 
 /**
  * msal-react is built on the React context API and all parts of your app that require authentication must be
@@ -30,13 +28,9 @@ const Pages = () => {
             <Route path="/authContent" element={<AuthContent />}/>
             <Route path="/profile" element={<ProfileView />}/>
             <Route path="/profileEdit" element={<ProfileEdit />}/>
-            <Route path="/weather" element={<WeatherForecast />}/>
-            <Route path="/todo" element={<ToDoList />}/>
 
             {/* Fallback Route */}
             <Route path="*" element={<NotFound />} />
-            <Route path="/todolist" element={<ToDoList />} />
-
         </Routes>
     );
 };

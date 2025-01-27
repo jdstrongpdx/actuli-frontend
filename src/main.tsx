@@ -1,7 +1,6 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { PublicClientApplication, EventType } from '@azure/msal-browser';
+import { PublicClientApplication } from '@azure/msal-browser';
 
 import { msalConfig } from './authConfig.js';
 import App from './App';
@@ -31,7 +30,13 @@ const initializeMsal = async () => {
 
 // Wait for MSAL to initialize before rendering React App
 initializeMsal().then((msalInstance) => {
-    const root = ReactDOM.createRoot(document.getElementById("root"));
+    const rootElement = document.getElementById("root");
+
+    if (!rootElement) {
+        throw new Error("Failed to find the root element. Make sure an element with id 'root' exists in your HTML.");
+    }
+
+    const root = ReactDOM.createRoot(rootElement);
 
     root.render(
         <BrowserRouter>

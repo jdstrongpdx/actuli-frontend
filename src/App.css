@@ -7,16 +7,36 @@
   --color-sky-trans: rgba(155, 172, 209, 0.5);
 }
 
-body {
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+
+html, body {
   font-family: "Bitter", serif;
   font-size: 16px;
   font-weight: 400;
   background-image: linear-gradient(to bottom right, rgb(217, 228, 237), white);
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 main {
   max-width: 1140px;
   margin: auto;
+  flex: 1;
+}
+
+/* Footer styling */
+footer {
+  text-align: center;
+  background-color: #f8f9fa; /* Light gray background */
+  padding: 1rem;
+  border-top: 1px solid #e7e7e7; /* Optional border for footer */
 }
 
 .custom-navbar {
